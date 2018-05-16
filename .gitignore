@@ -1,0 +1,5 @@
+config/*.php
+config/*.yml
+config/*.json
+vendor
+.idea

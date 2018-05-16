@@ -1,0 +1,13 @@
+{
+  "name": "e_wallet_test",
+  "version": "0.0.1",
+  "autoload":{
+    "psr-4": {
+      "Ewallet\\" : "src/",
+      "Engine\\": "src/e"
+    }
+  },
+  "require": {
+    "robmorgan/phinx": "^0.8.1"
+  }
+}

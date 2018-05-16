@@ -1,0 +1,17 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: wshaman
+ * Date: 14.11.16
+ * Time: 11:10
+ */
+
+return [
+    'db' => [
+        'type' =>\Engine\engine\DB::DB_POSTGRES,
+        'host' => 'localhost',
+        'dbname' => 'e_w',
+        'username' => 'e_w',
+        'password' => 'e_w'
+    ],
+];
