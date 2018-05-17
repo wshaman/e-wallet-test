@@ -24,6 +24,20 @@ abstract class BaseModel
     const DO_NOTHING    = 'NOTHING';
 
 
+    public function transactionBegin(){
+        $this->query("BEGIN TRANSACTION;");
+    }
+
+    public function transactionCommit()
+    {
+        $this->query("COMMIT;");
+    }
+
+    public function transactionRollback()
+    {
+        $this->query("ROLLBACK;");
+    }
+
     public function query(string $sql, $params=[], $keyfield=null)
     {
         $this->_checkAssigns($params);
@@ -41,7 +55,7 @@ abstract class BaseModel
         $assigned= [];
         foreach($field as $key => $value){
             if ($value == self::WHERE_PLAIN_TYPE){
-                continue;
+                $fields[] = $key;
             } else {
                 $fields[] = $key . '=:' . $key;
                 $assigned[':' . $key] = $value;

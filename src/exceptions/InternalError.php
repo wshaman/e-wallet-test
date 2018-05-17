@@ -1,16 +1,17 @@
 <?php
-
+/**
+    If this error were thrown, someshit has happened
+ */
 
 namespace Ewallet\exceptions;
 
 
-use Engine\tools\C;
 
-class WrongRequest extends \Exception
+class InternalError extends \Exception
 {
     public function __construct($message = "", $code = 0, \Exception $previous = null)
     {
-        $message = "Wrong request received: " . $message;
+        $message = "Something weird has happened: " . $message;
         return parent::__construct($message, $code, $previous);
     }
 }

@@ -29,8 +29,9 @@ class AddUser extends AbstractMigration
     {
         $this->table("location", ['id' => false, 'primary_key' => 'id'])
             ->addColumn('id', 'biginteger', ['identity'=>true])
-            ->addColumn('country', 'string', ['length'=>40])
-            ->addColumn('city', 'string', ['length'=>40])
+            ->addColumn('country', 'string', ['length'=>80])
+            ->addColumn('city', 'string', ['length'=>80])
+            ->addIndex(['country', 'city'], ['unique'=>true])
             ->create();
 
         $this->table("client", ['id' => false, 'primary_key' => 'id'])
@@ -38,10 +39,12 @@ class AddUser extends AbstractMigration
             ->addColumn('fullname', 'string', ['length'=>250])
             ->addColumn('location_id', 'biginteger')
             ->addColumn('coin_id', 'integer')
-            ->addColumn('amount', 'decimal', ['precision'=>30, 'scale'=>0])
-            ->addColumn('amount_display', 'decimal', ['precision'=>34, 'scale'=>4])
+            ->addColumn('amount', 'decimal', ['precision'=>40, 'scale'=>0])
+//            ->addColumn('amount_display', 'decimal', ['precision'=>34, 'scale'=>4])
             ->addForeignKey('coin_id', 'coin', 'id')
             ->addIndex(["fullname", "location_id", "coin_id"], ['unique'=>true])
             ->create();
+
+
     }
 }
