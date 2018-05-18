@@ -15,7 +15,7 @@ class UserApi extends BaseApi
 {
     use DbEasify;
     protected $return_type = C::RETURN_JSON;
-    public $defaultMethod = 'index';
+    public $defaultMethod = 'auth';
 
     public function RegisterMethodPost()
     {
@@ -36,5 +36,13 @@ class UserApi extends BaseApi
         }
         $data['amount'] = 0;
         return (new Client())->create($data);
+    }
+
+    public function AuthMethodPost()
+    {
+        //Dummy! No auth, return #id as token.
+        $user = $this->fromAnyRequired('user');
+        $r = $this->getClient($user);
+        return $r['id'];
     }
 }

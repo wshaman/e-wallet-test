@@ -34,45 +34,51 @@ class TransferApi extends BaseApi
         $c->transactionBegin();
         $sender = $this->getClientByToken(strval($token));
         $receiver = $this->getClient(intval($receiver_id));
-        $coin_in = $this->getCoinById($sender['coin_id']);
-        $coin_out = $this->getCoinById($receiver['coin_id']);
+        $coin_sender = $this->getCoinById($sender['coin_id']);
+        $coin_receiver = $this->getCoinById($receiver['coin_id']);
         $c->update(["\"amount\" =\"amount\" - {$amount}" => Client::WHERE_PLAIN_TYPE], ['id' => $sender['id']]);
         if ($sender['amount'] < $amount) {
             $c->transactionRollback();
             throw new WrongRequest("Not enough");
         }
-
+        //@nb: to be sure
         $sender = $this->getClientByToken(strval($token));
         if ($sender['amount'] < 0) {
             $c->transactionRollback();
             throw new WrongRequest("Not enough");
         }
-        if ($coin_in['id'] == $coin_out['id']) {
+        if ($coin_sender['id'] == $coin_receiver['id']) {
             $amount_out = $amount;
+            $rate_receiver = $rate_sender = ['coin_rate'=>1, 'usd_rate'=>1];
         } else {
-            $rate_in = (new CoinRate())->selectRateForToday(intval($sender['coin_id']));
-            $rate_out = (new CoinRate())->selectRateForToday(intval($receiver['coin_id']));
-            if (!$rate_in || !$rate_out) {
+            $rate_sender = (new CoinRate())->selectRateForToday(intval($sender['coin_id']));
+            $rate_receiver = (new CoinRate())->selectRateForToday(intval($receiver['coin_id']));
+            if (!$rate_sender || !$rate_receiver) {
                 $c->transactionRollback();
                 throw new WrongRequest("No exchange rate for this today");
             }
-            $amount_out = $amount * 1;
+            $amount_out = $amount *
+                ($coin_receiver['precision'] * $rate_sender['coin_rate'] * $rate_receiver['usd_rate']) /
+                ($coin_sender['precision'] * $rate_receiver['coin_rate'] * $rate_sender['usd_rate']);
+            $amount_out = intval(round($amount_out));
         }
+        $c->update(["\"amount\" =\"amount\" + {$amount_out}" => Client::WHERE_PLAIN_TYPE], ['id' => $receiver_id]);
         $r = (new Transaction())->log([
-            'sender_id' => null,
-            'receiver_id' => $receiver,
+            'sender_id' => $sender['id'],
+            'receiver_id' => $receiver_id,
             'send_amount' => $amount,
             'receive_amount' => $amount_out,
-            'send_rate' => 1,
-            'receive_rate' => 1,
-            'send_precision'=> $coin_in['precision'],
-            'receive_precision'=> $coin_out['precision'],
+            'send_rate_coin' => $rate_sender['coin_rate'],
+            'send_rate_usd' => $rate_sender['usd_rate'],
+            'receive_rate_coin' => $rate_receiver['coin_rate'],
+            'receive_rate_usd' => $rate_receiver['usd_rate'],
         ]);
         if (!$r){
             $c->transactionRollback();
             throw new InternalError("Can't save transaction!");
         }
         $c->transactionCommit();
+        return $r;
     }
 
     public function FillMethodPost()
@@ -87,16 +93,15 @@ class TransferApi extends BaseApi
         $c->transactionBegin();
         $c->update(["\"amount\" =\"amount\" + {$amount}" => Client::WHERE_PLAIN_TYPE], ['id' => $client['id']]);
 
-        $coin = $this->getCoinById($client['coin_id']);
         (new Transaction())->log([
             'sender_id' => null,
             'receiver_id' => $receiver,
             'send_amount' => $amount,
             'receive_amount' => $amount,
-            'send_rate' => 1,
-            'receive_rate' => 1,
-            'send_precision'=> $coin['precision'],
-            'receive_precision'=> $coin['precision'],
+            'send_rate_coin' => 1,
+            'send_rate_usd' => 1,
+            'receive_rate_coin' => 1,
+            'receive_rate_usd' => 1,
         ]);
         $client = $this->getClient(intval($receiver));
         $c->transactionCommit();

@@ -41,6 +41,6 @@ class CoinApi extends BaseApi
         } else {
             $res = $cr->create($data);
         }
-        return $res;
+        return 'OK';
     }
 }
