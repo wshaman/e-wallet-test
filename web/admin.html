@@ -21,6 +21,7 @@
     <div id="header" class="row"><h1>E-wallet test</h1></div>
     <div id="controls" class="row">
         <form action="/admin/transfer">
+            <select name="uid" id="user_list"></select>
             <label for="date_from">From:</label>
             <input type="text" id="date_from" class="datepicker">
             <label for="date_to">To:</label>
@@ -32,5 +33,5 @@
     <div id="results" class="row"></div>
 </div>
 </body>
-<script src="/static/main.js"></script>
+<script src="./static/main.js"></script>
 </html>

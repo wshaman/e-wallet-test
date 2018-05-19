@@ -42,6 +42,7 @@ class AddUser extends AbstractMigration
             ->addColumn('amount', 'decimal', ['precision'=>40, 'scale'=>0])
 //            ->addColumn('amount_display', 'decimal', ['precision'=>34, 'scale'=>4])
             ->addForeignKey('coin_id', 'coin', 'id')
+            ->addForeignKey('location_id', 'location', 'id')
             ->addIndex(["fullname", "location_id", "coin_id"], ['unique'=>true])
             ->create();
 
