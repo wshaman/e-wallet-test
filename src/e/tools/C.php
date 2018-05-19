@@ -18,6 +18,7 @@ class C
     const RETURN_JSON   = 2;
     const RETURN_PLAIN  = 4;
     const RETURN_AS_IS  = 8;
+    const RETURN_HTML   = 16;
 
     const ERROR_CODE_WRONG_PARAMS =     40;
 }

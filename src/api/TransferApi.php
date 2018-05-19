@@ -27,6 +27,7 @@ class TransferApi extends BaseApi
         $token = $this->fromAnyRequired('token');
         $amount = $this->fromAnyRequired('amount');
         $receiver_id = $this->fromAnyRequired('receiver');
+        $send_by_recevier_wallet = $this->fromAny('send_by_recevier_wallet', 0);
         if (!is_integer($amount)) {
             throw new WrongRequest("Amount must be integer");
         }
@@ -36,6 +37,30 @@ class TransferApi extends BaseApi
         $receiver = $this->getClient(intval($receiver_id));
         $coin_sender = $this->getCoinById($sender['coin_id']);
         $coin_receiver = $this->getCoinById($receiver['coin_id']);
+        if ($coin_sender['id'] == $coin_receiver['id']) {
+            $amount_out = $amount;
+            $rate_receiver = $rate_sender = ['coin_rate' => 1, 'usd_rate' => 1];
+        } else {
+            $rate_sender = (new CoinRate())->selectRateForToday(intval($sender['coin_id']));
+            $rate_receiver = (new CoinRate())->selectRateForToday(intval($receiver['coin_id']));
+            if (!$rate_sender || !$rate_receiver) {
+                $c->transactionRollback();
+                throw new WrongRequest("No exchange rate for this today");
+            }
+            $exchange_coef = (
+                ($coin_receiver['precision'] * $rate_sender['coin_rate'] * $rate_receiver['usd_rate']) /
+                ($coin_sender['precision'] * $rate_receiver['coin_rate'] * $rate_sender['usd_rate'])
+            );
+            if ($send_by_recevier_wallet > 0) {
+                //@nb: assume $amount in this case is $amount_out, but not $amount
+                $amount_out = $amount;
+                $amount = $amount_out / $exchange_coef;
+                $amount = intval(round($amount));
+            } else {
+                $amount_out = $amount * $exchange_coef;
+                $amount_out = intval(round($amount_out));
+            }
+        }
         $c->update(["\"amount\" =\"amount\" - {$amount}" => Client::WHERE_PLAIN_TYPE], ['id' => $sender['id']]);
         if ($sender['amount'] < $amount) {
             $c->transactionRollback();
@@ -46,21 +71,6 @@ class TransferApi extends BaseApi
         if ($sender['amount'] < 0) {
             $c->transactionRollback();
             throw new WrongRequest("Not enough");
-        }
-        if ($coin_sender['id'] == $coin_receiver['id']) {
-            $amount_out = $amount;
-            $rate_receiver = $rate_sender = ['coin_rate'=>1, 'usd_rate'=>1];
-        } else {
-            $rate_sender = (new CoinRate())->selectRateForToday(intval($sender['coin_id']));
-            $rate_receiver = (new CoinRate())->selectRateForToday(intval($receiver['coin_id']));
-            if (!$rate_sender || !$rate_receiver) {
-                $c->transactionRollback();
-                throw new WrongRequest("No exchange rate for this today");
-            }
-            $amount_out = $amount *
-                ($coin_receiver['precision'] * $rate_sender['coin_rate'] * $rate_receiver['usd_rate']) /
-                ($coin_sender['precision'] * $rate_receiver['coin_rate'] * $rate_sender['usd_rate']);
-            $amount_out = intval(round($amount_out));
         }
         $c->update(["\"amount\" =\"amount\" + {$amount_out}" => Client::WHERE_PLAIN_TYPE], ['id' => $receiver_id]);
         $r = (new Transaction())->log([
@@ -73,7 +83,7 @@ class TransferApi extends BaseApi
             'receive_rate_coin' => $rate_receiver['coin_rate'],
             'receive_rate_usd' => $rate_receiver['usd_rate'],
         ]);
-        if (!$r){
+        if (!$r) {
             $c->transactionRollback();
             throw new InternalError("Can't save transaction!");
         }

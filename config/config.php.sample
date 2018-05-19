@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: wshaman
- * Date: 14.11.16
- * Time: 11:10
- */
 
 return [
     'db' => [
@@ -13,5 +7,6 @@ return [
         'dbname' => 'e_w',
         'username' => 'e_w',
         'password' => 'e_w'
+        'partitioning_enabled' => true
     ],
 ];

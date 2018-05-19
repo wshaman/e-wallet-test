@@ -39,6 +39,7 @@ class E
         $req = array_map(function ($i) {
             return preg_replace('~[^-_\d\w\.]~', '', $i);
         }, $req);
+        $r_target = array_shift($req);
         $r_class = array_shift($req);
         $r_method = array_shift($req);
         if ($req) $req = array_values($req);
@@ -48,9 +49,8 @@ class E
             $r_method = array_shift($p);
             while ($_ = array_shift($p)) $r_method .= ucfirst($_);
         }
-        $className = "{$psrClassPrefix}\\" . ucfirst($r_class) . 'Api';
+        $className = "{$psrClassPrefix}\\{$r_target}\\" . ucfirst($r_class) . 'Api';
         $httpMethod = ucfirst(strtolower($_SERVER['REQUEST_METHOD']));
-        $methodName = ($r_method) ? F::simplify_string($r_method) . 'Method' . $httpMethod : null;
 
         if (!isset($r_class)) {
             self::$app->respoder->wrongParamsError('No class was given');
@@ -73,7 +73,10 @@ class E
             self::$app->respoder->wrongParamsError('No such class found: ' . $r_class);
             die;
         }
-        if (!$methodName) $methodName = $classObj->defaultMethod;
+
+        if (!$r_method) $r_method = $classObj->defaultMethod;
+        $methodName = ($r_method) ? F::simplify_string($r_method) . 'Method' . $httpMethod : null;
+
         if (!method_exists($classObj, $methodName)) {
             $methodName = preg_replace("/{$httpMethod}$/", "Any", $methodName);
         }
