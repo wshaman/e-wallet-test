@@ -60,7 +60,7 @@ function putLog(data) {
     let sel_pager = $('select#pager-selector');
     let page_count = Math.ceil(data.total / data.per_page);
     tbl_obj.html('');
-    $('.coin-name').html(data.receiver_coin);
+    $('.coin-name').html(data.client_coin);
     tbl_stat.find('td').eq(0).html(data.value_coin);
     tbl_stat.find('td').eq(1).html(data.value_usd);
     sel_pager.html('');

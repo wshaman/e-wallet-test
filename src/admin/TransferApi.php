@@ -78,10 +78,12 @@ class TransferApi extends BaseApi
         $page = intval($page) - 1;
         $limit = 100;
         $response = ['total' => 0, 'value_usd' => 0, 'value_coin' => 0, 'rows' => [], 'per_page' => $limit,
-            'page' => $page + 1
+            'page' => $page + 1, 'client_coin' => ''
         ];
         $client = (new Client())->findOne(['id' => $uid]);
         $usd_coin = (new Coin())->findOne(['code' => 'USD']);
+        $client_coin = $this->coins[$client['coin_id']];
+        $response['client_coin'] = $client_coin['code'];
         //@todo: For partman check if limits are in 1 month and use specific table.
         //@todo: Validate all this stuff
         $wheres = " WHERE (sender_id = :uid OR receiver_id =:uid)";

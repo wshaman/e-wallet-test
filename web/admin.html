@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>E-Wallet test</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
@@ -21,19 +21,44 @@
     <div class="row justify-content-md-center">
         <div class="col-sm-10">
             <div id="header" class="row"><h1>E-wallet test</h1></div>
-            <div  class="row">
+            <div class="row">
                 <form action="/admin/transfer" id="form_log">
                     <div class="row">
-                        <select name="uid" id="user_list"></select>
-                        <label for="date_from">From:</label>
-                        <input type="text" id="date_from" name="date_from" class="datepicker">
-                        <label for="date_to">To:</label>
-                        <input type="text" name="date_to" id="date_to" class="datepicker">
-                        <input type="submit" class="btn btn-default">
+                        <div class="sm">
+                            <div class="form-group">
+                                <label for="user_list">Client</label>
+                                <select name="uid" id="user_list" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div class="sm">
+                            <div class="form-group">
+                                <label for="date_from">From:</label>
+                                <input type="text" id="date_from" name="date_from" class="datepicker form-control">
+                            </div>
+                        </div>
+                        <div class="sm">
+                            <div class="form-group">
+                                <label for="date_to">To:</label>
+                                <input type="text" name="date_to" id="date_to" class="datepicker form-control">
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
-                        <select name="page" id="pager-selector"></select>
+                        <div class="sm">
+                            <div class="form-group">
+                                <label for="pager-selector">Select Page</label>
+                                <select name="page" id="pager-selector" class="form-control"></select>
+                            </div>
+                        </div>
                     </div>
+                    <div class="row">
+                        <div class="sm">
+                            <div class="form-froup">
+                                <input type="submit" class="btn btn-default">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">&nbsp;</div>
                 </form>
 
             </div>
