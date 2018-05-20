@@ -53,7 +53,7 @@ migrate ()
 
 }
 
-goodbuy ()
+goodbye ()
 {
     echo -e "================================================
     All done.\n Now you can call \ncd $(pwd) && ./serve.bash\n to start a local server\n"
@@ -63,4 +63,4 @@ check_composer
 update_vendor
 check_config
 migrate
-goodbuy
+goodbye
