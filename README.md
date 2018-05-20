@@ -6,6 +6,7 @@ Just a proof of work
 
 **Requirements:**
 - PHP 7.2 (SHOULD work on 7.1 though)
+- composer (https://getcomposer.org/download/)
 - Postgresql 9.4 (10+ for native partman recomended)
 - Bash to run install script.(It also used to build large files)
 
@@ -16,9 +17,17 @@ Installing partman here is required too
 git clone
 cd /path/to/project/
 chmod +x install.bash
+chmod +x serve.bash
 ./install.bash
 ```
 and follow instructions
+
+**RUN**
+---
+For testing purposes builtin php webserver is used. 
+```
+./run.bash
+```
 
 **NOTE**
 

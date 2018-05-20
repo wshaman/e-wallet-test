@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-COMPOSER="../composer.phar"
+COMPOSER="composer"
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
@@ -11,8 +11,8 @@ check_composer ()
     then
         echo -e "Composer not found. Install one from your package manager
         OR get one here:
-        https://getcomposer.org/download/ and update COMPOSER variable in this script
-        then rerun script"
+        https://getcomposer.org/download/ and update COMPOSER variable in this file: $0
+        then rerun $0"
         exit 1
     else
         echo "Using $COMPOSER as composer binary"
@@ -53,7 +53,14 @@ migrate ()
 
 }
 
+goodbuy ()
+{
+    echo -e "================================================
+    All done.\n Now you can call \ncd $(pwd) && ./serve.bash\n to start a local server\n"
+}
+
 check_composer
 update_vendor
 check_config
 migrate
+goodbuy
