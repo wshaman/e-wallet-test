@@ -69,6 +69,6 @@ function putLog(data) {
     }
     for (let i = 0; i < data.rows.length; i++) {
         let itm = data.rows[i];
-        tbl_obj.append(`<tr><td>${itm.hash}</td><td>${itm.sender}</td><td>${itm.receiver}</td><td>${itm.amount}</td><td></td></tr>`);
+        tbl_obj.append(`<tr><td>${itm.hash}</td><td>${itm.sender}</td><td>${itm.receiver}</td><td>${itm.amount}</td><td>${itm.date}</td></tr>`);
     }
 }

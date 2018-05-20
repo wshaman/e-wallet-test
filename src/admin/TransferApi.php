@@ -64,6 +64,7 @@ class TransferApi extends BaseApi
             'receiver' => $receiver,
             'receiver_coin' => $r_coin['code'],
             'amount' => $item['receive_amount'] / $r_coin['precision'],
+            'date' => $item['created_at']
         ];
         return $row;
     }
